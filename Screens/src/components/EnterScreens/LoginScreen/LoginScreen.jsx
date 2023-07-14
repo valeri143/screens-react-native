@@ -1,6 +1,8 @@
-import { View,Image, Text, TextInput, Pressable, KeyboardAvoidingView, Platform } from "react-native"
+import { View,Text, TextInput, Pressable, KeyboardAvoidingView, Platform, ImageBackground,TouchableWithoutFeedback, Keyboard } from "react-native"
 import React, { useState } from 'react';
+import { useNavigation } from '@react-navigation/native';
 import { styles } from "../EnterScreens.styled";
+import image from "../../../images/bg.jpg"
 
 export const LoginScreen = () => {
   const[email, setEmail] = useState('');
@@ -10,10 +12,12 @@ export const LoginScreen = () => {
     input2: false,
   });
 
+  const navigation = useNavigation()
   const onLogin = () =>{
    console.log({ email, password})
    setEmail('');
    setPassword('');
+   navigation.navigate('Home');
       }
 
   const handleFocus = (inputKey) => {
@@ -31,6 +35,10 @@ export const LoginScreen = () => {
   };
 
 return(
+  <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+         <View style={styles.containerBackground} >
+    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
+   
 <View style={[styles.container, {height: 489,   paddingTop: 32}]}>
 <Text style={styles.text}>Увійти</Text>
 <KeyboardAvoidingView 
@@ -68,10 +76,13 @@ return(
  <Pressable style={styles.button}>
   <Text style={styles.textButton} onPress={onLogin}>Увійти</Text>
 </Pressable>
-<Pressable >
+<Pressable onPress={() => {navigation.navigate('Registration')}}>
   <Text style={styles.textEnterButton}>Немає акаунту? Зареєструватися</Text>
 </Pressable>
 </View>
+    </ImageBackground>
+  </View>
+  </TouchableWithoutFeedback>
 )
 }
 

@@ -1,12 +1,21 @@
 import { StyleSheet } from "react-native";
 
 export const styles = StyleSheet.create({
+    containerBackground: {
+        flex: 1,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+      },
     container: {
     position: 'relative',
       backgroundColor: '#fff',
       borderTopLeftRadius: 25,
       borderTopRightRadius: 25,
     },
+    image: {
+        flex: 1,
+        justifyContent: 'flex-end',
+      },
     imageContainer:{
         position: 'absolute',
         left: 128,

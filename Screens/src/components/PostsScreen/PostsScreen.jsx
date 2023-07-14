@@ -1,29 +1,19 @@
-import { RegistrationScreen } from "../EnterScreens/RegistrationScreen/RegistrationScreen"
-import {ImageBackground, StyleSheet, View, TouchableWithoutFeedback, Keyboard} from 'react-native';
-import image from "../../images/bg.jpg"
-import { LoginScreen } from "../EnterScreens/LoginScreen/LoginScreen";
+import React from 'react';
+import { Image, Text, View, Pressable } from "react-native"
+import { styles } from "./PostsScreen.styled"
+import add from '../../images/add.png'
 
 export const PostsScreen = () => {
 return(
-    <>
-     <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
-      <View style={styles.container}>
-    <ImageBackground source={image} resizeMode="cover" style={styles.image}>
-      <RegistrationScreen/>
-      {/* <LoginScreen/> */}
-    </ImageBackground>
-  </View>
-  </TouchableWithoutFeedback>
-    </>
+<View style={{paddingLeft:16, paddingTop:32}}>
+<View style={styles.container}>
+    <View style={styles.imageContainer}></View>
+    <Image source={add} style={styles.imageAdd}/>
+    <View style={{marginTop:"auto", marginBottom:"auto"}}>
+    <Text>Name</Text>
+    <Text>Email</Text>
+    </View>
+</View>
+</View> 
 )
 }
-
-const styles = StyleSheet.create({
-    container: {
-      flex: 1,
-    },
-    image: {
-      flex: 1,
-      justifyContent: 'flex-end',
-    },
-  });
