@@ -8,17 +8,13 @@ import {
   Pressable,
   StyleSheet,
   TouchableOpacity,
-  Dimensions,
 } from "react-native";
 import { styles } from "./CreatePostsScreen.styled";
-import camera from "../../images/camera.png";
-import map from "../../images/map.png";
-import trash from "../../images/trash.png";
 import { Camera } from "expo-camera";
 import * as MediaLibrary from "expo-media-library";
 import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
-import MapView, { Marker } from "react-native-maps";
+import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
 export const CreatePostsScreen = () => {
@@ -49,6 +45,12 @@ export const CreatePostsScreen = () => {
 
   const handlePress = async () => {
     try {
+      navigation.navigate("PostsScreen", {
+        location,
+        takenPhotoUri,
+        postName,
+        postLocation,
+      });
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
@@ -66,22 +68,13 @@ export const CreatePostsScreen = () => {
         console.log("Location data is not available.");
         return;
       }
-      console.log("Before navigation");
-      const navigateResult = navigation.navigate("Home", {
-        location,
-        takenPhotoUri,
-        postName,
-        postLocation,
-      });
-      console.log("Navigate result:", navigateResult);
-      console.log(postName, postLocation);
     } catch (error) {
       console.error("Произошла ошибка:", error.message);
     }
   };
 
   const handlePressOnTrash = () => {
-    navigation.navigate("Home");
+    navigation.navigate("PostsScreen");
     setTakenPhotoUri(null);
     setLocation(null);
     setPostName("");
@@ -93,7 +86,12 @@ export const CreatePostsScreen = () => {
         (hasPermission === false && (
           <View style={styles.container}>
             <View style={styles.circle}>
-              <Image source={camera} style={styles.image} />
+              <Feather
+                name="camera"
+                size={24}
+                color="#BDBDBD"
+                style={styles.image}
+              />
             </View>
           </View>
         ))}
@@ -156,14 +154,21 @@ export const CreatePostsScreen = () => {
         placeholder="Назва..."
         style={styles.input}
         onChangeText={setPostName}
+        value={postName}
       />
       <View>
         <TextInput
           placeholder="Місцевість..."
           style={[styles.input, styles.inputWithMap]}
           onChangeText={setPostLocation}
+          value={postLocation}
         />
-        <Image source={map} style={styles.imageMap} />
+        <Feather
+          name="map-pin"
+          size={24}
+          color="#BDBDBD"
+          style={styles.imageMap}
+        />
       </View>
       <Pressable
         style={[styles.button, takenPhotoUri !== null && styles.buttonActive]}
@@ -177,7 +182,7 @@ export const CreatePostsScreen = () => {
         </Text>
       </Pressable>
       <Pressable style={styles.buttonTrash} onPress={handlePressOnTrash}>
-        <Image source={trash} />
+        <Feather name="trash-2" size={24} color="#BDBDBD" />
       </Pressable>
     </View>
   );
@@ -224,17 +229,6 @@ const style = StyleSheet.create({
     width: 40,
     backgroundColor: "white",
     borderRadius: 50,
-  },
-  containerMap: {
-    flex: 1,
-    backgroundColor: "#fff",
-    alignItems: "center",
-    justifyContent: "center",
-    zIndex: 999,
-  },
-  mapStyle: {
-    width: Dimensions.get("window").width,
-    height: Dimensions.get("window").height,
   },
 });
 

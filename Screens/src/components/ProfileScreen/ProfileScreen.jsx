@@ -3,9 +3,9 @@ import { ImageBackground, View, Image, Pressable, Text } from "react-native";
 import add from "../../images/add.png";
 import image from "../../images/bg.jpg";
 import { styles } from "./ProfileScreen.styled";
-import logOut from "../../images/logout.png";
 import { useEffect } from "react";
 import { useIsFocused, useNavigation } from "@react-navigation/native";
+import { Feather } from "@expo/vector-icons";
 
 export const ProfileScreen = () => {
   const isFocused = useIsFocused();
@@ -23,8 +23,10 @@ export const ProfileScreen = () => {
         <View style={styles.imageContainer}></View>
         <Image source={add} style={styles.imageAdd} />
         <Pressable onPress={() => alert("You have just loged out!")}>
-          <Image
-            source={logOut}
+          <Feather
+            name="log-out"
+            size={24}
+            color="#BDBDBD"
             style={{ position: "absolute", right: 16, top: -70 }}
           />
         </Pressable>
