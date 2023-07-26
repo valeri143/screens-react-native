@@ -8,16 +8,15 @@ import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 const firebaseConfig = {
-    apiKey: "AIzaSyA0ABkYAOaH9-16ZifNIWghH9Q5BxyFc3w",
-    authDomain: "screens-eb8d9.firebaseapp.com",
-    databaseURL: "https://screens-eb8d9-default-rtdb.europe-west1.firebasedatabase.app",
-    projectId: "screens-eb8d9",
-    storageBucket: "screens-eb8d9.appspot.com",
-    messagingSenderId: "148883041402",
-    appId: "1:148883041402:web:9339234513eebc2301dfc3",
-    measurementId: "G-7TJVY60936"
-  };
-  
+  apiKey: "AIzaSyDf4LYi6rNmF1tmZsam6T3GWobg1CHk09o",
+  authDomain: "appscreen-7e66a.firebaseapp.com",
+  projectId: "appscreen-7e66a",
+  storageBucket: "appscreen-7e66a.appspot.com",
+  messagingSenderId: "845359526313",
+  appId: "1:845359526313:web:41aa3df48439bd4bd554b8",
+  measurementId: "G-G8SVFQYPY0"
+};
+
 const app = initializeApp(firebaseConfig);
 
 export const auth = getAuth(app);
