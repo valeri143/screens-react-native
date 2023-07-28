@@ -17,9 +17,7 @@ export const styles = StyleSheet.create({
   },
   imageAdd: {
     position: "absolute",
-    height: 20,
-    width: 20,
     bottom: 0,
-    left: 45,
+    left: -23,
   },
 });

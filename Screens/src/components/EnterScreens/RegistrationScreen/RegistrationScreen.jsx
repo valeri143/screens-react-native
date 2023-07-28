@@ -1,6 +1,5 @@
 import {
   View,
-  Image,
   Text,
   TextInput,
   Pressable,
@@ -13,34 +12,36 @@ import {
 import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/native";
 import { styles } from "../EnterScreens.styled";
-import add from "../../../images/add.png";
+import { AntDesign } from "@expo/vector-icons";
 import image from "../../../images/bg.jpg";
 import { registerDB } from "../../helpers/firebaseFunc";
+import { registerSuccess } from "../../../redux/authSlice/authSlice";
+import { useDispatch } from "react-redux";
 
 export const RegistrationScreen = () => {
   const [login, setLogin] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(true);
   const [inputStates, setInputStates] = useState({
     input1: false,
     input2: false,
     input3: false,
   });
 
+  const dispatch = useDispatch();
   const navigation = useNavigation();
 
-  // const onLogin = () => {
-  //   console.log({ login, email, password });
-  //   setLogin("");
-  //   setEmail("");
-  //   setPassword("");
-  //   navigation.navigate("Home");
-  // };
-
   const handleRegister = async () => {
-    console.log({ login, email, password });
     try {
+      console.log("Registration data:", { email, password });
       await registerDB({ email, password });
+      console.log("Registration successful!");
+      dispatch(registerSuccess({ email, login }));
+      console.log("After register:", { email, password });
+      setLogin("");
+      setEmail("");
+      setPassword("");
       navigation.navigate("Home");
     } catch (error) {
       console.error("Registration error:", error.message);
@@ -67,7 +68,12 @@ export const RegistrationScreen = () => {
         <ImageBackground source={image} resizeMode="cover" style={styles.image}>
           <View style={[styles.container, { height: 549, paddingTop: 92 }]}>
             <View style={styles.imageContainer}></View>
-            <Image source={add} style={styles.imageAdd} />
+            <AntDesign
+              name="pluscircleo"
+              size={24}
+              color="#FF6C00"
+              style={styles.imageAdd}
+            />
             <Text style={styles.text}>Реєстрація</Text>
             <KeyboardAvoidingView
               behavior={Platform.OS == "ios" ? "padding" : "height"}
@@ -107,9 +113,18 @@ export const RegistrationScreen = () => {
                   onBlur={() => handleBlur("input3")}
                   placeholder="Пароль"
                   maxLength={15}
-                  secureTextEntry
+                  secureTextEntry={showPassword}
                 />
-                <Text style={styles.textAccent}>Показати</Text>
+                <Pressable
+                  style={styles.textAccent}
+                  onPress={() =>
+                    setShowPassword((prevShowPassword) => !prevShowPassword)
+                  }
+                >
+                  <Text style={{ color: "#1B4371" }}>
+                    {showPassword ? "Показати" : "Приховати"}
+                  </Text>
+                </Pressable>
               </View>
             </KeyboardAvoidingView>
             <Pressable style={styles.button} onPress={handleRegister}>

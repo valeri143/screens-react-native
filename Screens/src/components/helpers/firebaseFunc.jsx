@@ -37,6 +37,9 @@ export const updateUserProfile = async (update) => {
     // оновлюємо його профайл
     try {
       await updateProfile(user, update);
+      // await updateProfile(userCredential.user, {
+      //   displayName: displayName,
+      // });
     } catch (error) {
       throw error;
     }
