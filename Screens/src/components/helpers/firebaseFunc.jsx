@@ -3,12 +3,16 @@ import {
   signInWithEmailAndPassword,
   onAuthStateChanged,
   updateProfile,
+  signOut,
 } from "firebase/auth";
 import { auth } from "../../../config";
 
-export const registerDB = async ({ email, password }) => {
+export const registerDB = async ({ email, password, login }) => {
   try {
     await createUserWithEmailAndPassword(auth, email, password);
+    await updateUserProfile({
+      displayName: login,
+    });
   } catch (error) {
     throw error;
   }
@@ -32,16 +36,19 @@ export const loginDB = async ({ email, password }) => {
 export const updateUserProfile = async (update) => {
   const user = auth.currentUser;
 
-  // якщо такий користувач знайдений
   if (user) {
-    // оновлюємо його профайл
     try {
       await updateProfile(user, update);
-      // await updateProfile(userCredential.user, {
-      //   displayName: displayName,
-      // });
     } catch (error) {
       throw error;
     }
+  }
+};
+
+export const logoutUser = async () => {
+  try {
+    await signOut(auth);
+  } catch (error) {
+    throw error;
   }
 };

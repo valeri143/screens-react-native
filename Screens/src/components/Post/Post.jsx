@@ -4,6 +4,7 @@ import { useNavigation } from "@react-navigation/native";
 
 export const Post = ({ postName, postLocation, takenPhotoUri, location }) => {
   const navigation = useNavigation();
+
   return (
     <View
       style={{

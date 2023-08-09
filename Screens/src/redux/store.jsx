@@ -12,7 +12,7 @@ import {
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 import { combineReducers } from "redux";
-import { postsReducer } from "./posrSlice/postSlice";
+import { postsReducer } from "./postSlice/postSlice";
 import { authReducer } from "./authSlice/authSlice";
 
 const rootReducer = combineReducers({

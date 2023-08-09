@@ -34,11 +34,9 @@ export const RegistrationScreen = () => {
 
   const handleRegister = async () => {
     try {
-      console.log("Registration data:", { email, password });
-      await registerDB({ email, password });
+      await registerDB({ email, password, login });
       console.log("Registration successful!");
       dispatch(registerSuccess({ email, login }));
-      console.log("After register:", { email, password });
       setLogin("");
       setEmail("");
       setPassword("");

@@ -20,6 +20,7 @@ import { useDispatch } from "react-redux";
 export const LoginScreen = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(true);
   const [inputStates, setInputStates] = useState({
     input1: false,
     input2: false,
@@ -30,13 +31,17 @@ export const LoginScreen = () => {
 
   const handleLogin = async () => {
     try {
-      await loginDB({ email, password });
-      dispatch(loginSuccess(email));
+      const user = await loginDB({ email, password });
+
+      await user.reload();
+      const login = user.displayName || "";
+      dispatch(loginSuccess({ email, login }));
+
       setEmail("");
       setPassword("");
       navigation.navigate("Home");
     } catch (error) {
-      console.error("Registration error:", error.message);
+      console.error("Login error:", error.message);
     }
   };
 
@@ -87,9 +92,18 @@ export const LoginScreen = () => {
                   onBlur={() => handleBlur("input2")}
                   placeholder="Пароль"
                   maxLength={15}
-                  secureTextEntry
+                  secureTextEntry={showPassword}
                 />
-                <Text style={styles.textAccent}>Показати</Text>
+                <Pressable
+                  style={styles.textAccent}
+                  onPress={() =>
+                    setShowPassword((prevShowPassword) => !prevShowPassword)
+                  }
+                >
+                  <Text style={{ color: "#1B4371" }}>
+                    {showPassword ? "Показати" : "Приховати"}
+                  </Text>
+                </Pressable>
               </View>
             </KeyboardAvoidingView>
             <Pressable style={styles.button}>

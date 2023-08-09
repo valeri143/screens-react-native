@@ -6,6 +6,9 @@ import { Feather } from "@expo/vector-icons";
 import { Pressable, Image } from "react-native";
 import { useEffect } from "react";
 import { Ionicons } from "@expo/vector-icons";
+import { useDispatch } from "react-redux";
+import { logout } from "../../redux/authSlice/authSlice";
+import { logoutUser } from "../helpers/firebaseFunc";
 
 const Tabs = createBottomTabNavigator();
 
@@ -13,6 +16,17 @@ export const Home = ({ navigation }) => {
   useEffect(() => {
     navigation.navigate("PostsScreen");
   }, []);
+
+  const dispatch = useDispatch();
+
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      dispatch(logout());
+    } catch (error) {
+      console.error("Logout error:", error.message);
+    }
+  };
 
   return (
     <Tabs.Navigator
@@ -47,7 +61,7 @@ export const Home = ({ navigation }) => {
           tabBarLabelStyle: { display: "none" },
           tabBarActiveTintColor: "gray",
           headerRight: () => (
-            <Pressable onPress={() => alert("You have just loged out!")}>
+            <Pressable onPress={handleLogout}>
               <Feather
                 name="log-out"
                 size={24}

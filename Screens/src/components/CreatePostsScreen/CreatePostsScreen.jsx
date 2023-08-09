@@ -16,6 +16,8 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { writeDataToFirestore } from "../helpers/firestoreFunc";
+import { collectionGroup } from "firebase/firestore";
 
 export const CreatePostsScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -45,12 +47,6 @@ export const CreatePostsScreen = () => {
 
   const handlePress = async () => {
     try {
-      navigation.navigate("PostsScreen", {
-        location,
-        takenPhotoUri,
-        postName,
-        postLocation,
-      });
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
@@ -71,6 +67,16 @@ export const CreatePostsScreen = () => {
     } catch (error) {
       console.error("Произошла ошибка:", error.message);
     }
+
+    const postData = {
+      takenPhotoUri,
+      location,
+      postName,
+      postLocation,
+    };
+    console.log("CREATE DATA", postData);
+    writeDataToFirestore(postData);
+    navigation.navigate("PostsScreen", postData);
   };
 
   const handlePressOnTrash = () => {
@@ -231,200 +237,3 @@ const style = StyleSheet.create({
     borderRadius: 50,
   },
 });
-
-// const handlePress = () => {
-//   if (!location) {
-//     console.log("Location data is not available.");
-//     return;
-//   }
-
-//   <View style={style.containerMap}>
-//     <MapView
-//       style={style.mapStyle}
-//       region={{
-//         ...location,
-//         latitudeDelta: 0.0922,
-//         longitudeDelta: 0.0421,
-//       }}
-//       showsUserLocation={true}
-//     >
-//       {location && (
-//         <Marker title="I am here" coordinate={location} description="Hello" />
-//       )}
-//     </MapView>
-//   </View>;
-// };
-
-// import React from "react";
-// import { useState, useEffect } from "react";
-// import {
-//   View,
-//   Image,
-//   Text,
-//   TextInput,
-//   Pressable,
-//   StyleSheet,
-//   TouchableOpacity,
-//   Dimensions,
-// } from "react-native";
-// import { styles } from "./CreatePostsScreen.styled";
-// import camera from "../../images/camera.png";
-// import map from "../../images/map.png";
-// import trash from "../../images/trash.png";
-// import { Camera } from "expo-camera";
-// import * as MediaLibrary from "expo-media-library";
-// import { Ionicons } from "@expo/vector-icons";
-// import * as Location from "expo-location";
-// import MapView, { Marker } from "react-native-maps";
-
-// export const CreatePostsScreen = () => {
-//   const [hasPermission, setHasPermission] = useState(null);
-//   const [cameraRef, setCameraRef] = useState(null);
-//   const [type, setType] = useState(Camera.Constants.Type.back);
-//   const [takenPhotoUri, setTakenPhotoUri] = useState(null);
-//   const [location, setLocation] = useState(null);
-
-//   useEffect(() => {
-//     (async () => {
-//       const { status } = await Camera.requestCameraPermissionsAsync();
-//       await MediaLibrary.requestPermissionsAsync();
-//       setHasPermission(status === "granted");
-//     })();
-//   }, []);
-
-//   useEffect(() => {
-//     (async () => {
-//       let { status } = await Location.requestPermissionsAsync();
-//       if (status !== "granted") {
-//         console.log("Permission to access location was denied");
-//       }
-
-//       let location = await Location.getCurrentPositionAsync({});
-//       const coords = {
-//         latitude: location.coords.latitude,
-//         longitude: location.coords.longitude,
-//       };
-//       setLocation(coords);
-//     })();
-//   }, []);
-
-//   if (hasPermission === null) {
-//     return <View />;
-//   }
-//   if (hasPermission === false) {
-//     return <Text>No access to camera</Text>;
-//   }
-
-//   const handlePress = () => {
-//     if (!location) {
-//       console.log("Location data is not available.");
-//       return;
-//     }
-
-//     <View style={style.containerMap}>
-//       <MapView
-//         style={style.mapStyle}
-//         region={{
-//           ...location,
-//           latitudeDelta: 0.0922,
-//           longitudeDelta: 0.0421,
-//         }}
-//         showsUserLocation={true}
-//       >
-//         {location && (
-//           <Marker title="I am here" coordinate={location} description="Hello" />
-//         )}
-//       </MapView>
-//     </View>;
-//   };
-
-//   return (
-//     <View style={{ paddingTop: 32, marginLeft: "auto", marginRight: "auto" }}>
-//       {hasPermission === null ||
-//         (hasPermission === false && (
-//           <View style={styles.container}>
-//             <View style={styles.circle}>
-//               <Image source={camera} style={styles.image} />
-//             </View>
-//           </View>
-//         ))}
-//       <View style={style.container}>
-//         {!takenPhotoUri && (
-//           <Camera style={style.camera} type={type} ref={setCameraRef}>
-//             <View style={style.photoView}>
-//               <TouchableOpacity
-//                 style={style.flipContainer}
-//                 onPress={() => {
-//                   setType(
-//                     type === Camera.Constants.Type.back
-//                       ? Camera.Constants.Type.front
-//                       : Camera.Constants.Type.back
-//                   );
-//                 }}
-//               >
-//                 <Ionicons
-//                   name="camera-reverse-outline"
-//                   size={35}
-//                   color="white"
-//                 />
-//               </TouchableOpacity>
-//               <TouchableOpacity
-//                 style={style.button}
-//                 onPress={async () => {
-//                   if (cameraRef) {
-//                     const { uri } = await cameraRef.takePictureAsync();
-//                     await MediaLibrary.createAssetAsync(uri);
-//                     setTakenPhotoUri(uri);
-//                   }
-//                 }}
-//               >
-//                 <View style={style.takePhotoOut}>
-//                   <View style={style.takePhotoInner}></View>
-//                 </View>
-//               </TouchableOpacity>
-//             </View>
-//           </Camera>
-//         )}
-//         {takenPhotoUri && (
-//           <>
-//             <Image source={{ uri: takenPhotoUri }} style={{ flex: 1 }} />
-//             <Ionicons
-//               name="close-circle-outline"
-//               size={26}
-//               color="white"
-//               style={{ position: "absolute", right: 0 }}
-//               onPress={() => {
-//                 setTakenPhotoUri(null);
-//               }}
-//             />
-//           </>
-//         )}
-//       </View>
-//       <Text style={{ color: "#BDBDBD", marginBottom: 32 }}>
-//         Завантажте фото
-//       </Text>
-//       <TextInput placeholder="Назва..." style={styles.input} />
-//       <View>
-//         <TextInput
-//           placeholder="Місцевість..."
-//           style={[styles.input, styles.inputWithMap]}
-//         />
-//         <Image source={map} style={styles.imageMap} />
-//       </View>
-//       <Pressable
-//         style={[styles.button, takenPhotoUri !== null && styles.buttonActive]}
-//         disabled={takenPhotoUri === null}
-//         onPress={handlePress}
-//       >
-//         <Text
-//           style={[styles.text, takenPhotoUri !== null && styles.textActive]}
-//         >
-//           Опубліковати
-//         </Text>
-//       </Pressable>
-//       <Pressable style={styles.buttonTrash}>
-//         <Image source={trash} />
-//       </Pressable>
-//     </View>
-//   );
-// };
