@@ -20,4 +20,10 @@ export const styles = StyleSheet.create({
     bottom: 0,
     left: -23,
   },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 30,
+  },
 });

@@ -7,6 +7,22 @@ export const styles = StyleSheet.create({
   containerComments: {
     marginBottom: 31,
   },
+  containerForOneComment: {
+    backgroundColor: "#00000008",
+    width: 150,
+    borderBottomEndRadius: 6,
+    borderLeftRightRadius: 6,
+    marginBottom: 24,
+    paddingHorizontal: 16,
+    paddingTop: 16,
+    paddingBottom: 25,
+  },
+  textOfComments: {
+    color: "#212121",
+    fontSize: 13,
+    fontWeight: 400,
+    lineHeight: 18,
+  },
   inputContainer: {
     position: "absolute",
     bottom: 16,

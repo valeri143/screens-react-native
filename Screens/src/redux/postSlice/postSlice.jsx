@@ -22,9 +22,18 @@ const postsSlice = createSlice({
       state.isLoading = false;
       state.isError = action.payload;
     },
+    clearPostsLogOut: (state) => {
+      state.posts = [];
+      state.isLoading = false;
+      state.isError = null;
+    },
   },
 });
 
-export const { fetchPostsStart, fetchPostsSuccess, fetchPostsFailure } =
-  postsSlice.actions;
+export const {
+  fetchPostsStart,
+  fetchPostsSuccess,
+  fetchPostsFailure,
+  clearPostsLogOut,
+} = postsSlice.actions;
 export const postsReducer = postsSlice.reducer;

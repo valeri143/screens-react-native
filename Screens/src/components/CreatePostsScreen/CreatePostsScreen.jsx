@@ -8,6 +8,10 @@ import {
   Pressable,
   StyleSheet,
   TouchableOpacity,
+  KeyboardAvoidingView,
+  Platform,
+  TouchableWithoutFeedback,
+  Keyboard,
 } from "react-native";
 import { styles } from "./CreatePostsScreen.styled";
 import { Camera } from "expo-camera";
@@ -16,8 +20,17 @@ import { Ionicons } from "@expo/vector-icons";
 import * as Location from "expo-location";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
-import { writeDataToFirestore } from "../helpers/firestoreFunc";
-import { collectionGroup } from "firebase/firestore";
+import {
+  getDataFromFirestore,
+  writeDataToFirestore,
+} from "../helpers/firestoreFunc";
+import { useDispatch, useSelector } from "react-redux";
+import {
+  fetchPostsFailure,
+  fetchPostsStart,
+  fetchPostsSuccess,
+} from "../../redux/postSlice/postSlice";
+import { selectLogin } from "../../redux/authSlice/selectors";
 
 export const CreatePostsScreen = () => {
   const [hasPermission, setHasPermission] = useState(null);
@@ -29,6 +42,8 @@ export const CreatePostsScreen = () => {
   const [postLocation, setPostLocation] = useState("");
 
   const navigation = useNavigation();
+  const dispatch = useDispatch();
+  const login = useSelector(selectLogin);
 
   useEffect(() => {
     (async () => {
@@ -45,8 +60,16 @@ export const CreatePostsScreen = () => {
     return <Text>No access to camera</Text>;
   }
 
+  const clearStates = () => {
+    setTakenPhotoUri(null);
+    setLocation(null);
+    setPostName("");
+    setPostLocation("");
+  };
   const handlePress = async () => {
     try {
+      navigation.navigate("PostsScreen", postData);
+      dispatch(fetchPostsStart());
       let { status } = await Location.requestForegroundPermissionsAsync();
       if (status !== "granted") {
         console.log("Permission to access location was denied");
@@ -66,6 +89,7 @@ export const CreatePostsScreen = () => {
       }
     } catch (error) {
       console.error("Произошла ошибка:", error.message);
+      dispatch(fetchPostsFailure(error));
     }
 
     const postData = {
@@ -73,124 +97,132 @@ export const CreatePostsScreen = () => {
       location,
       postName,
       postLocation,
+      displayName: login,
     };
-    console.log("CREATE DATA", postData);
+
     writeDataToFirestore(postData);
-    navigation.navigate("PostsScreen", postData);
+    const posts = await getDataFromFirestore();
+    dispatch(fetchPostsSuccess(posts));
+    clearStates();
+    return posts;
   };
 
   const handlePressOnTrash = () => {
     navigation.navigate("PostsScreen");
-    setTakenPhotoUri(null);
-    setLocation(null);
-    setPostName("");
-    setPostLocation("");
+    clearStates();
   };
+
   return (
-    <View style={{ paddingTop: 32, marginLeft: "auto", marginRight: "auto" }}>
-      {hasPermission === null ||
-        (hasPermission === false && (
-          <View style={styles.container}>
-            <View style={styles.circle}>
-              <Feather
-                name="camera"
-                size={24}
-                color="#BDBDBD"
-                style={styles.image}
-              />
-            </View>
-          </View>
-        ))}
-      <View style={style.container}>
-        {!takenPhotoUri && (
-          <Camera style={style.camera} type={type} ref={setCameraRef}>
-            <View style={style.photoView}>
-              <TouchableOpacity
-                style={style.flipContainer}
-                onPress={() => {
-                  setType(
-                    type === Camera.Constants.Type.back
-                      ? Camera.Constants.Type.front
-                      : Camera.Constants.Type.back
-                  );
-                }}
-              >
-                <Ionicons
-                  name="camera-reverse-outline"
-                  size={35}
-                  color="white"
+    <TouchableWithoutFeedback onPress={Keyboard.dismiss}>
+      <View style={{ paddingTop: 32, marginLeft: "auto", marginRight: "auto" }}>
+        {hasPermission === null ||
+          (hasPermission === false && (
+            <View style={styles.container}>
+              <View style={styles.circle}>
+                <Feather
+                  name="camera"
+                  size={24}
+                  color="#BDBDBD"
+                  style={styles.image}
                 />
-              </TouchableOpacity>
-              <TouchableOpacity
-                style={style.button}
-                onPress={async () => {
-                  if (cameraRef) {
-                    const { uri } = await cameraRef.takePictureAsync();
-                    await MediaLibrary.createAssetAsync(uri);
-                    setTakenPhotoUri(uri);
-                  }
-                }}
-              >
-                <View style={style.takePhotoOut}>
-                  <View style={style.takePhotoInner}></View>
-                </View>
-              </TouchableOpacity>
+              </View>
             </View>
-          </Camera>
-        )}
-        {takenPhotoUri && (
-          <>
-            <Image source={{ uri: takenPhotoUri }} style={{ flex: 1 }} />
-            <Ionicons
-              name="close-circle-outline"
-              size={26}
-              color="white"
-              style={{ position: "absolute", right: 0 }}
-              onPress={() => {
-                setTakenPhotoUri(null);
-              }}
-            />
-          </>
-        )}
-      </View>
-      <Text style={{ color: "#BDBDBD", marginBottom: 32 }}>
-        Завантажте фото
-      </Text>
-      <TextInput
-        placeholder="Назва..."
-        style={styles.input}
-        onChangeText={setPostName}
-        value={postName}
-      />
-      <View>
-        <TextInput
-          placeholder="Місцевість..."
-          style={[styles.input, styles.inputWithMap]}
-          onChangeText={setPostLocation}
-          value={postLocation}
-        />
-        <Feather
-          name="map-pin"
-          size={24}
-          color="#BDBDBD"
-          style={styles.imageMap}
-        />
-      </View>
-      <Pressable
-        style={[styles.button, takenPhotoUri !== null && styles.buttonActive]}
-        disabled={takenPhotoUri === null}
-        onPress={handlePress}
-      >
-        <Text
-          style={[styles.text, takenPhotoUri !== null && styles.textActive]}
-        >
-          Опубліковати
+          ))}
+        <View style={style.container}>
+          {!takenPhotoUri && (
+            <Camera style={style.camera} type={type} ref={setCameraRef}>
+              <View style={style.photoView}>
+                <TouchableOpacity
+                  style={style.flipContainer}
+                  onPress={() => {
+                    setType(
+                      type === Camera.Constants.Type.back
+                        ? Camera.Constants.Type.front
+                        : Camera.Constants.Type.back
+                    );
+                  }}
+                >
+                  <Ionicons
+                    name="camera-reverse-outline"
+                    size={35}
+                    color="white"
+                  />
+                </TouchableOpacity>
+                <TouchableOpacity
+                  style={style.button}
+                  onPress={async () => {
+                    if (cameraRef) {
+                      const { uri } = await cameraRef.takePictureAsync();
+                      await MediaLibrary.createAssetAsync(uri);
+                      setTakenPhotoUri(uri);
+                    }
+                  }}
+                >
+                  <View style={style.takePhotoOut}>
+                    <View style={style.takePhotoInner}></View>
+                  </View>
+                </TouchableOpacity>
+              </View>
+            </Camera>
+          )}
+          {takenPhotoUri && (
+            <>
+              <Image source={{ uri: takenPhotoUri }} style={{ flex: 1 }} />
+              <Ionicons
+                name="close-circle-outline"
+                size={26}
+                color="white"
+                style={{ position: "absolute", right: 0 }}
+                onPress={() => {
+                  setTakenPhotoUri(null);
+                }}
+              />
+            </>
+          )}
+        </View>
+        <Text style={{ color: "#BDBDBD", marginBottom: 32 }}>
+          Завантажте фото
         </Text>
-      </Pressable>
-      <Pressable style={styles.buttonTrash} onPress={handlePressOnTrash}>
-        <Feather name="trash-2" size={24} color="#BDBDBD" />
-      </Pressable>
-    </View>
+        <KeyboardAvoidingView
+          behavior={Platform.OS == "ios" ? "padding" : "height"}
+        >
+          <TextInput
+            placeholder="Назва..."
+            style={styles.input}
+            onChangeText={setPostName}
+            value={postName}
+          />
+          <View>
+            <TextInput
+              placeholder="Місцевість..."
+              style={[styles.input, styles.inputWithMap]}
+              onChangeText={setPostLocation}
+              value={postLocation}
+            />
+            <Feather
+              name="map-pin"
+              size={24}
+              color="#BDBDBD"
+              style={styles.imageMap}
+            />
+          </View>
+        </KeyboardAvoidingView>
+        <Pressable
+          style={[styles.button, takenPhotoUri !== null && styles.buttonActive]}
+          disabled={takenPhotoUri === null}
+          onPress={handlePress}
+        >
+          <Text
+            style={[styles.text, takenPhotoUri !== null && styles.textActive]}
+          >
+            Опубліковати
+          </Text>
+        </Pressable>
+        <Pressable style={styles.buttonTrash} onPress={handlePressOnTrash}>
+          <Feather name="trash-2" size={24} color="#BDBDBD" />
+        </Pressable>
+      </View>
+    </TouchableWithoutFeedback>
   );
 };
 

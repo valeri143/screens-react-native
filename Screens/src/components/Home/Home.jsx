@@ -9,6 +9,7 @@ import { Ionicons } from "@expo/vector-icons";
 import { useDispatch } from "react-redux";
 import { logout } from "../../redux/authSlice/authSlice";
 import { logoutUser } from "../helpers/firebaseFunc";
+import { clearPostsLogOut } from "../../redux/postSlice/postSlice";
 
 const Tabs = createBottomTabNavigator();
 
@@ -23,6 +24,7 @@ export const Home = ({ navigation }) => {
     try {
       await logoutUser();
       dispatch(logout());
+      dispatch(clearPostsLogOut());
     } catch (error) {
       console.error("Logout error:", error.message);
     }

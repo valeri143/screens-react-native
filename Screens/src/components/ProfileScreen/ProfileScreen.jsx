@@ -1,5 +1,5 @@
 import React from "react";
-import { ImageBackground, View, Image, Pressable, Text } from "react-native";
+import { ImageBackground, View, Pressable, Text } from "react-native";
 import { AntDesign } from "@expo/vector-icons";
 import image from "../../images/bg.jpg";
 import { styles } from "./ProfileScreen.styled";
@@ -10,7 +10,9 @@ import { useDispatch, useSelector } from "react-redux";
 import { logout } from "../../redux/authSlice/authSlice";
 import { logoutUser } from "../helpers/firebaseFunc";
 import { selectLogin } from "../../redux/authSlice/selectors";
-import { Post } from "../Post/Post";
+import { PostsList } from "../PostsList/PostsList";
+import { clearPostsLogOut } from "../../redux/postSlice/postSlice";
+import { selectPosts } from "../../redux/postSlice/selectors";
 
 export const ProfileScreen = () => {
   const isFocused = useIsFocused();
@@ -18,6 +20,7 @@ export const ProfileScreen = () => {
   const dispatch = useDispatch();
 
   const login = useSelector(selectLogin);
+  const posts = useSelector(selectPosts);
 
   useEffect(() => {
     navigation.setOptions({
@@ -29,10 +32,13 @@ export const ProfileScreen = () => {
     try {
       await logoutUser();
       dispatch(logout());
+      dispatch(clearPostsLogOut());
     } catch (error) {
       console.error("Logout error:", error.message);
     }
   };
+
+  const usersPosts = posts.filter(({ data }) => data.displayName === login);
 
   return (
     <ImageBackground source={image} resizeMode="cover" style={styles.image}>
@@ -53,7 +59,7 @@ export const ProfileScreen = () => {
           />
         </Pressable>
         <Text style={styles.text}>{login}</Text>
-        <Post />
+        {usersPosts && <PostsList posts={usersPosts} />}
       </View>
     </ImageBackground>
   );

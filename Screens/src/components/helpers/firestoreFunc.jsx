@@ -2,10 +2,8 @@ import { collection, addDoc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "../../../config";
 
 export const writeDataToFirestore = async (postData) => {
-  console.log("ADDDDDDD DOCC POST", postData);
   try {
-    const docRef = await addDoc(collection(db, "posts"), postData);
-    console.log("Document written with ID: ", docRef.id);
+    await addDoc(collection(db, "posts"), postData);
   } catch (e) {
     console.error("Error adding document: ", e);
     throw e;
@@ -14,28 +12,39 @@ export const writeDataToFirestore = async (postData) => {
 
 export const getDataFromFirestore = async () => {
   try {
-    const snapshot = await getDocs(collection(db, "posts"));
-    // Перевіряємо у консолі отримані дані
-    snapshot.forEach((doc) => console.log(`${doc.id} =>`, doc.data()));
-    // Повертаємо масив обʼєктів у довільній формі
-    const posts = snapshot.map((doc) => ({ id: doc.id, data: doc.data() }));
-    console.log("POOOOST", posts);
-    return posts;
+    const data = [];
+    const posts = await getDocs(collection(db, "posts"));
+    posts.forEach((doc) => {
+      data.push({ id: doc.id, data: doc.data() });
+    });
+
+    return data;
   } catch (error) {
     console.log(error);
     throw error;
   }
 };
 
-export const updateDataInFirestore = async (collectionName, docId) => {
+export const writeDataCommentToFirestore = async (comment) => {
   try {
-    const ref = doc(db, collectionName, docId);
+    await addDoc(collection(db, "comments"), comment);
+  } catch (e) {
+    console.error("Error adding document: ", e);
+    throw e;
+  }
+};
 
-    await updateDoc(ref, {
-      age: 25,
+export const getDataCommentsFromFirestore = async () => {
+  try {
+    const data = [];
+    const comments = await getDocs(collection(db, "comments"));
+    comments.forEach((doc) => {
+      data.push({ id: doc.id, data: doc.data() });
     });
-    console.log("document updated");
+
+    return data;
   } catch (error) {
     console.log(error);
+    throw error;
   }
 };

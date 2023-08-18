@@ -14,10 +14,12 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import { combineReducers } from "redux";
 import { postsReducer } from "./postSlice/postSlice";
 import { authReducer } from "./authSlice/authSlice";
+import { commentsReducer } from "./commentSlice/commentsSlice";
 
 const rootReducer = combineReducers({
   auth: authReducer,
   posts: postsReducer,
+  comments: commentsReducer,
 });
 
 const persistConfig = {

@@ -72,4 +72,10 @@ export const styles = StyleSheet.create({
   },
   text: { color: "#BDBDBD", fontSize: 16 },
   textActive: { color: "#fff" },
+  loadingContainer: {
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    marginTop: 30,
+  },
 });

@@ -28,20 +28,28 @@ export const Post = ({ postName, postLocation, takenPhotoUri, location }) => {
           justifyContent: "space-between",
         }}
       >
-        <View style={{ flexDirection: "row", alignItems: "center", gap: 9 }}>
-          <Pressable
-            onPress={() => {
-              navigation.navigate("CommentsScreen", { takenPhotoUri });
-            }}
-          >
-            <Feather
-              name="message-circle"
-              size={24}
-              color="#BDBDBD"
-              style={{ transform: [{ rotate: "270deg" }] }}
-            />
-          </Pressable>
-          <Text style={{ color: "#BDBDBD" }}>0</Text>
+        <View style={{ display: "flex", gap: 24, flexDirection: "row" }}>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Pressable
+              onPress={() => {
+                navigation.navigate("CommentsScreen", { takenPhotoUri });
+              }}
+            >
+              <Feather
+                name="message-circle"
+                size={24}
+                color="#BDBDBD"
+                style={{ transform: [{ rotate: "270deg" }] }}
+              />
+            </Pressable>
+            <Text style={{ color: "#BDBDBD", fontSize: 16 }}>0</Text>
+          </View>
+          <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+            <Pressable>
+              <Feather name="thumbs-up" size={24} color="#BDBDBD" />
+            </Pressable>
+            <Text style={{ color: "#BDBDBD", fontSize: 16 }}>0</Text>
+          </View>
         </View>
         <View style={{ flexDirection: "row", alignItems: "center", gap: 8 }}>
           <Pressable
