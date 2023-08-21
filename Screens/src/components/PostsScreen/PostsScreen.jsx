@@ -14,7 +14,10 @@ import { useRoute } from "@react-navigation/native";
 import { selectEmail, selectLogin } from "../../redux/authSlice/selectors";
 import { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { getDataFromFirestore } from "../helpers/firestoreFunc";
+import {
+  getDataFromFirestore,
+  getDataCommentsFromFirestore,
+} from "../helpers/firestoreFunc";
 import {
   selectIsError,
   selectIsLoading,
@@ -25,6 +28,8 @@ import {
   fetchPostsStart,
   fetchPostsSuccess,
 } from "../../redux/postSlice/postSlice";
+import { fetchAllComments } from "../../redux/commentSlice/commentsSlice";
+import { selectAllComments } from "../../redux/commentSlice/selectors";
 
 export const PostsScreen = () => {
   const {
@@ -40,6 +45,7 @@ export const PostsScreen = () => {
 
   const dispatch = useDispatch();
   const posts = useSelector(selectPosts);
+  const allComments = useSelector(selectAllComments);
   const isLoading = useSelector(selectIsLoading);
   const isError = useSelector(selectIsError);
 
@@ -49,6 +55,10 @@ export const PostsScreen = () => {
         dispatch(fetchPostsStart());
         const posts = await getDataFromFirestore();
         dispatch(fetchPostsSuccess(posts));
+        const allComments = await getDataCommentsFromFirestore();
+        console.log(5);
+        dispatch(fetchAllComments(allComments));
+        console.log(allComments);
         return posts;
       } catch (error) {
         console.log(error);

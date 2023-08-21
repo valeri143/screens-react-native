@@ -2,6 +2,7 @@ import { Post } from "../Post/Post";
 import { ScrollView } from "react-native";
 
 export const PostsList = ({ posts }) => {
+  const commentsCount = 1;
   return (
     <ScrollView>
       {posts.map(({ data, id }) => {
@@ -13,6 +14,7 @@ export const PostsList = ({ posts }) => {
             takenPhotoUri={takenPhotoUri}
             postLocation={postLocation}
             location={location}
+            commentsCount={commentsCount}
           />
         );
       })}

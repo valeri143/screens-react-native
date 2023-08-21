@@ -10,6 +10,7 @@ import {
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  ActivityIndicator,
 } from "react-native";
 import { styles } from "./CommentsScreen.styled";
 import { useRoute } from "@react-navigation/native";

@@ -2,6 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
   comments: [],
+  allComments: [],
   isLoading: false,
   isError: null,
 };
@@ -13,6 +14,10 @@ const commentsSlice = createSlice({
     fetchCommentsStart: (state) => {
       state.isLoading = true;
       state.isError = null;
+    },
+    fetchAllComments: (state) => {
+      state.isLoading = false;
+      state.allComments = action.payload;
     },
     fetchCommentsSuccess: (state, action) => {
       state.isLoading = false;
@@ -35,6 +40,7 @@ export const {
   fetchCommentsSuccess,
   fetchCommentsFailure,
   clearCommentsLogOut,
+  fetchAllComments,
 } = commentsSlice.actions;
 
 export const commentsReducer = commentsSlice.reducer;

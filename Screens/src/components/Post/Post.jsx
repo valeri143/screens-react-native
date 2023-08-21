@@ -2,7 +2,13 @@ import { Text, View, Image, Pressable } from "react-native";
 import { Feather } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
 
-export const Post = ({ postName, postLocation, takenPhotoUri, location }) => {
+export const Post = ({
+  postName,
+  postLocation,
+  takenPhotoUri,
+  location,
+  commentsCount = 0,
+}) => {
   const navigation = useNavigation();
 
   return (
@@ -42,7 +48,9 @@ export const Post = ({ postName, postLocation, takenPhotoUri, location }) => {
                 style={{ transform: [{ rotate: "270deg" }] }}
               />
             </Pressable>
-            <Text style={{ color: "#BDBDBD", fontSize: 16 }}>0</Text>
+            <Text style={{ color: "#BDBDBD", fontSize: 16 }}>
+              {commentsCount}
+            </Text>
           </View>
           <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
             <Pressable>
