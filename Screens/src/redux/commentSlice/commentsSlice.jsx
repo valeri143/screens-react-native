@@ -15,7 +15,7 @@ const commentsSlice = createSlice({
       state.isLoading = true;
       state.isError = null;
     },
-    fetchAllComments: (state) => {
+    fetchAllComments: (state, action) => {
       state.isLoading = false;
       state.allComments = action.payload;
     },

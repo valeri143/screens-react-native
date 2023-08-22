@@ -87,24 +87,22 @@ export const CreatePostsScreen = () => {
         console.log("Location data is not available.");
         return;
       }
+      const postData = {
+        takenPhotoUri,
+        location,
+        postName,
+        postLocation,
+        displayName: login,
+      };
+      writeDataToFirestore(postData);
+      const posts = await getDataFromFirestore();
+      dispatch(fetchPostsSuccess(posts));
+      clearStates();
+      return posts;
     } catch (error) {
       console.error("Произошла ошибка:", error.message);
       dispatch(fetchPostsFailure(error));
     }
-
-    const postData = {
-      takenPhotoUri,
-      location,
-      postName,
-      postLocation,
-      displayName: login,
-    };
-
-    writeDataToFirestore(postData);
-    const posts = await getDataFromFirestore();
-    dispatch(fetchPostsSuccess(posts));
-    clearStates();
-    return posts;
   };
 
   const handlePressOnTrash = () => {

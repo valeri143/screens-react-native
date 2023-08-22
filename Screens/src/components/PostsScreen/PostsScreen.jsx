@@ -56,9 +56,7 @@ export const PostsScreen = () => {
         const posts = await getDataFromFirestore();
         dispatch(fetchPostsSuccess(posts));
         const allComments = await getDataCommentsFromFirestore();
-        console.log(5);
         dispatch(fetchAllComments(allComments));
-        console.log(allComments);
         return posts;
       } catch (error) {
         console.log(error);
@@ -112,7 +110,7 @@ export const PostsScreen = () => {
           location={location}
         />
       )}
-      {posts && <PostsList posts={posts} />}
+      {posts && <PostsList posts={posts} allComments={allComments} />}
     </ScrollView>
   );
 };

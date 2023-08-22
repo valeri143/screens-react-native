@@ -24,6 +24,7 @@ import {
   fetchCommentsSuccess,
   fetchCommentsStart,
   fetchCommentsFailure,
+  fetchAllComments,
 } from "../../redux/commentSlice/commentsSlice";
 import { useSelector, useDispatch } from "react-redux";
 import {
@@ -53,6 +54,7 @@ export const CommentsScreen = () => {
       try {
         dispatch(fetchCommentsStart());
         const data = await getDataCommentsFromFirestore();
+        dispatch(fetchAllComments(data));
         const filteredData = data.filter(
           ({ data }) =>
             data.currentPost.data.takenPhotoUri ===
