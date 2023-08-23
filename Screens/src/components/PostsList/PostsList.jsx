@@ -6,12 +6,12 @@ export const PostsList = ({ posts, allComments }) => {
     <ScrollView>
       {posts.map(({ data, id }) => {
         const { postName, postLocation, takenPhotoUri, location } = data;
-        const commentsForPost = allComments.filter(
+        const commentsForPost = allComments?.filter(
           (comment) =>
             comment.data.currentPost.data.takenPhotoUri === takenPhotoUri
         );
 
-        const commentsCount = commentsForPost.length;
+        const commentsCount = commentsForPost?.length;
 
         return (
           <Post
